@@ -1,4 +1,4 @@
-package main
+package caddy_cookie_origin
 
 import (
 	"net/http"
