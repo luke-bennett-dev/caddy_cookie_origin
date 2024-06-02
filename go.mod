@@ -2,10 +2,7 @@ module github.com/luke-bennett-dev/caddy_cookie_origin
 
 go 1.22.2
 
-require (
-	github.com/caddyserver/caddy v1.0.5
-	github.com/caddyserver/caddy/v2 v2.8.4
-)
+require github.com/caddyserver/caddy/v2 v2.8.4
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

@@ -1,18 +1,19 @@
 package caddy_cookie_origin
 
 import (
+	"bytes"
 	"net/http"
 	"strings"
 
-	"bytes"
-
-	"github.com/caddyserver/caddy/caddyfile"
 	"github.com/caddyserver/caddy/v2"
+	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
+	"github.com/caddyserver/caddy/v2/caddyconfig/httpcaddyfile"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp"
 )
 
 func init() {
 	caddy.RegisterModule(CookieModifier{})
+	httpcaddyfile.RegisterHandlerDirective("caddy_cookie_origin", parseCaddyfileHandler)
 }
 
 type CookieModifier struct {
@@ -27,10 +28,11 @@ func (CookieModifier) CaddyModule() caddy.ModuleInfo {
 	}
 }
 
-func (cm *CookieModifier) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
-	if !d.Args(&cm.FromDomain, &cm.ToDomain) {
-		return d.ArgErr()
-	}
+func (cm *CookieModifier) Provision(ctx caddy.Context) error {
+	return nil
+}
+
+func (cm CookieModifier) Validate() error {
 	return nil
 }
 
@@ -65,5 +67,18 @@ func (cm CookieModifier) ServeHTTP(w http.ResponseWriter, r *http.Request, next 
 	// Write the modified response
 	rec.WriteResponse()
 
+	return nil
+}
+
+func parseCaddyfileHandler(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error) {
+	var cm CookieModifier
+	err := cm.UnmarshalCaddyfile(h.Dispenser)
+	return cm, err
+}
+
+func (cm *CookieModifier) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
+	if !d.Args(&cm.FromDomain, &cm.ToDomain) {
+		return d.ArgErr()
+	}
 	return nil
 }
